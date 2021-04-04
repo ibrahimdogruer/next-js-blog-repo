@@ -1,7 +1,9 @@
 {
-  "name": "next-js-blog",
+  "name": "next-js-blog-repo",
   "version": "1.0.0",
   "main": "index.js",
+  "repository": "https://github.com/ibrahimdogruer/next-js-blog-repo.git",
+  "author": "İbrahim Doğruer <ibrahim@assayazilim.com>",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
