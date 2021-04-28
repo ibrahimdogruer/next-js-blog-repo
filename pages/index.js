@@ -2,6 +2,13 @@ function HomePage() {
   return (
     <>
       <div className="site-container">
+        <div className="mb-10 flex justify-center">
+          <img
+            src="/me.jpeg"
+            alt=""
+            className="w-60 h-60 rounded-full object-cover border-black border-2"
+          />
+        </div>
         <div className="space-y-4">
           <h1 className="text-2xl font-bold">
             Ben İbrahim Doğruer. Bursa'da yaşayan Yazılım Geliştiricisiyim.
@@ -14,9 +21,6 @@ function HomePage() {
 
           <p>Amacım, edindiğim bilgileri bu blog aracılığıyla paylaşmak.</p>
         </div>
-      </div>
-      <div className="site-4xl-container mt-20">
-          <img src="/me.jpeg" alt="" height="100%" />
       </div>
     </>
   );
