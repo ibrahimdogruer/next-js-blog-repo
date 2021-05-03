@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 export default function Comments({ comments }) {
   return (
     <div className="mt-10 py-4 space-y-4">
-      <hr className="mb-6" />
+      {comments?.length && <hr className="mb-6" />}
       {comments?.map(({ id, createdAt, text, user }) => {
         return (
           <div key={id} className="flex items-center space-x-2">
