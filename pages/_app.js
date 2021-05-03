@@ -6,7 +6,7 @@ import Header from "../components/header";
 function MyApp({ Component, pageProps }) {
   return (
     <Auth0Provider
-      domain="ibrahimdogruer-blog.eu.auth0.com"
+      domain={process.env.NEXT_PUBLIC_AUTH0_DOMAIN}
       clientId={process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID}
       redirectUri={process.env.NEXT_PUBLIC_URL}
     >

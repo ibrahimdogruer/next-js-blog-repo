@@ -9,7 +9,7 @@ export default function PostMeta({ post }) {
             Yazar{" "}
             {post.frontMatter.author.map((author, index) => (
               <strong className="font-semibold text-blue-600" key={index}>
-                {index !== 0 && " and "} <Link href={author}>{author}</Link>
+                {index !== 0 && " and "} <a>{author}</a>
               </strong>
             ))}
           </span>
@@ -18,7 +18,7 @@ export default function PostMeta({ post }) {
           Kategori{" "}
           {post.frontMatter.category.map((category, index) => (
             <span className="font-semibold text-blue-600" key={index}>
-              {index !== 0 && " and "} <Link href={category}>{category}</Link>
+              {index !== 0 && " and "} <a>{category}</a>
             </span>
           ))}
         </span>
