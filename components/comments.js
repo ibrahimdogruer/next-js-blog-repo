@@ -1,9 +1,16 @@
 import { DateTime } from "luxon";
 
 export default function Comments({ comments }) {
+  if (!comments || !comments?.length) {
+    return (
+      <div className="mt-5 flex justify-center items-center bg-gray-300 p-2 rounded">
+        <span>Henüz bir yorum yapılmamış!</span>
+      </div>
+    );
+  }
   return (
-    <div className="mt-10 py-4 space-y-4">
-      {comments?.length && <hr className="mb-6" />}
+    <div className="mt-6 py-4 space-y-4">
+      <hr className="mb-6" />
       {comments?.map(({ id, createdAt, text, user }) => {
         return (
           <div key={id} className="flex items-center space-x-2">
