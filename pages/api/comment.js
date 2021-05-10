@@ -7,55 +7,70 @@ function errorResponse(res, error) {
   return res.status(output.statusCode).json(output.payload);
 }
 
-export default async function handler(req, res) {
+export default async (req, res) => {
   // CREATE
   if (req.method === "POST") {
     const { url, userToken, text } = req.body;
 
-    if (!url || !userToken || !text) {
-      return errorResponse(res, Boom.badData("parametre eksik"));
+    if (!token) {
+      return res.status(403).send('Unauthorized')
+    }
+    if (!text || !url) {
+      return res.status(400).send('Invalid paramaters')
     }
 
-    const userResponse = await fetch(
-      `https://${process.env.NEXT_PUBLIC_AUTH0_DOMAIN}/userinfo`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userToken}`,
-        },
+    try {
+      const userResponse = await fetch(
+        `https://${process.env.NEXT_PUBLIC_AUTH0_DOMAIN}/userinfo`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+      const { name, picture } = await response.json()
+
+      if (!user) {
+        return errorResponse(res, Boom.unauthorized());
       }
-    );
-    const user = await userResponse.json();
 
-    if (!user) {
-      return errorResponse(res, Boom.unauthorized());
+      const newComment = {
+          id: nanoid(),
+          created_at: Date.now(),
+          text,
+          name,
+          picture,
+          url
+        }
+
+      let redis = new Redis(process.env.REDIS_URL);
+      await redis.lpush(url, JSON.stringify(newComment));
+      await redis.quit();
+
+      return res.status(200).json(newComment);
+    } catch (err) {
+      return res.status(400).json({ error: err.message })
     }
-
-    const comment = {
-      id: nanoid(),
-      createdAt: Date.now(),
-      text,
-      user: {
-        name: user.name,
-        picture: user.picture,
-      },
-    };
-
-    let redis = new Redis(process.env.REDIS_URL);
-    redis.lpush(url, JSON.stringify(comment));
-    redis.quit();
-
-    res.status(200).json(comment);
   }
 
   // FETCH
   if (req.method === "GET") {
     const { url } = req.query;
-    let redis = new Redis(process.env.REDIS_URL);
-    const comments = await redis.lrange(url, 0, -1);
-    redis.quit();
 
-    const data = comments.map((item) => JSON.parse(item));
-    res.status(200).json(data);
+    if (!url) {
+      return res.status(400).send('Invalid paramaters')
+    }
+
+    try {
+      let redis = new Redis(process.env.REDIS_URL);
+      const comments = await redis.lrange(url, 0, -1);
+      await redis.quit();
+
+      const data = comments.map((item) => JSON.parse(item));
+      return res.status(200).json(data);
+    } catch (err) {
+      return res.status(400).json({ error: err.message })
+    }
   }
 }

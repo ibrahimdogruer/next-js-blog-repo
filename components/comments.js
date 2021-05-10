@@ -11,23 +11,23 @@ export default function Comments({ comments }) {
   return (
     <div className="mt-6 py-4 space-y-4">
       <hr className="mb-6" />
-      {comments?.map(({ id, createdAt, text, user }) => {
+      {comments?.map(comment => {
         return (
-          <div key={id} className="flex items-center space-x-2">
+          <div key={comment.id} className="flex items-center space-x-2">
             <img
-              src={user.picture}
-              alt={user.name}
+              src={comment.picture}
+              alt={comment.name}
               width={50}
               className="rounded-full"
             />
             <div>
               <div className="space-x-2">
-                <b>{user.name}</b>
+                <b>{comment.name}</b>
                 <time className="text-gray-400">
-                  {DateTime.fromMillis(createdAt).toRelative()}
+                  {DateTime.fromMillis(comment.createdAt).toRelative()}
                 </time>
               </div>
-              <p>{text}</p>
+              <p>{comment.text}</p>
             </div>
           </div>
         );
