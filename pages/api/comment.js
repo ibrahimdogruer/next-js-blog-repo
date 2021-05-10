@@ -12,46 +12,44 @@ export default async (req, res) => {
   if (req.method === "POST") {
     const { url, userToken, text } = req.body;
 
-    if (!token) {
-      return res.status(403).send('Unauthorized')
+    if (!userToken) {
+      errorResponse(res, Boom.unauthorized("Unauthorized"));
     }
     if (!text || !url) {
-      return res.status(400).send('Invalid paramaters')
+      errorResponse(res, Boom.badRequest("Invalid paramaters"));
     }
 
-    try {
-      const userResponse = await fetch(
-        `https://${process.env.NEXT_PUBLIC_AUTH0_DOMAIN}/userinfo`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
-      const { name, picture } = await response.json()
-
-      if (!user) {
-        return errorResponse(res, Boom.unauthorized());
+    const userResponse = await fetch(
+      `https://${process.env.NEXT_PUBLIC_AUTH0_DOMAIN}/userinfo`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
       }
+    );
 
-      const newComment = {
-          id: nanoid(),
-          created_at: Date.now(),
-          text,
-          name,
-          picture,
-          url
-        }
-
-      let redis = new Redis(process.env.REDIS_URL);
-      await redis.lpush(url, JSON.stringify(newComment));
-      await redis.quit();
-
-      return res.status(200).json(newComment);
-    } catch (err) {
-      return res.status(400).json({ error: err.message })
+    if (!userResponse) {
+      errorResponse(res, Boom.unauthorized("Unauthorized"));
     }
+    const { name, picture, email } = await userResponse.json();
+
+    const newComment = {
+      id: nanoid(),
+      created_at: Date.now(),
+      text,
+      name,
+      picture,
+      email,
+      url,
+    };
+    console.log(newComment);
+
+    let redis = new Redis(process.env.REDIS_URL);
+    await redis.lpush(url, JSON.stringify(newComment));
+    await redis.quit();
+
+    res.status(200).json(newComment);
   }
 
   // FETCH
@@ -59,18 +57,46 @@ export default async (req, res) => {
     const { url } = req.query;
 
     if (!url) {
-      return res.status(400).send('Invalid paramaters')
+      errorResponse(res, Boom.badRequest("Invalid paramaters"));
     }
 
-    try {
-      let redis = new Redis(process.env.REDIS_URL);
-      const comments = await redis.lrange(url, 0, -1);
-      await redis.quit();
+    let redis = new Redis(process.env.REDIS_URL);
+    const comments = await redis.lrange(url, 0, -1);
+    await redis.quit();
 
-      const data = comments.map((item) => JSON.parse(item));
-      return res.status(200).json(data);
-    } catch (err) {
-      return res.status(400).json({ error: err.message })
-    }
+    const data = comments.map((item) => JSON.parse(item));
+    res.status(200).json(data);
   }
-}
+
+  // DELETE
+  if (req.method === "DELETE") {
+    const { url, comment, userToken } = req.body;
+    if (!userToken) {
+      errorResponse(res, Boom.unauthorized("Unauthorized"));
+    }
+
+    if (!url || !comment) {
+      errorResponse(res, Boom.badRequest("Invalid paramaters"));
+    }
+
+    const userResponse = await fetch(
+      `https://${process.env.NEXT_PUBLIC_AUTH0_DOMAIN}/userinfo`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+    let user = await userResponse.json();
+    if (!user || user.email !== comment.email) {
+      errorResponse(res, Boom.unauthorized("Unauthorized"));
+    }
+
+    let redis = new Redis(process.env.REDIS_URL);
+    await redis.lrem(url, 1, JSON.stringify(comment));
+    await redis.quit();
+
+    res.status(200).json({ message: "Successful" });
+  }
+};

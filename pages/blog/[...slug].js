@@ -8,7 +8,7 @@ import useComments from "../../hooks/useComments";
 import { useHydrate } from "next-mdx/client";
 
 export default function PostPage({ post }) {
-  const [comments, onSubmit, text, setText] = useComments();
+  const [comments, onSubmit, text, setText, removeComment] = useComments();
 
   const content = useHydrate(post, {
     components: mdxComponents,
@@ -32,7 +32,7 @@ export default function PostPage({ post }) {
       </article>
 
       <Form onSubmit={onSubmit} setText={setText} text={text} />
-      <Comments comments={comments} />
+      <Comments comments={comments} removeComment={removeComment} />
     </div>
   );
 }

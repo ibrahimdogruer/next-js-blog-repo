@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import Swal from 'sweetalert2'
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function () {
@@ -39,10 +40,39 @@ export default function () {
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => alert(err));
     fetchComment();
     setText("");
   };
 
-  return [comments, onSubmit, text, setText];
+  const removeComment = async (comment) => {
+    const userToken = await getAccessTokenSilently();
+    await fetch("/api/comment", {
+      method: "DELETE",
+      body: JSON.stringify({ url, comment, userToken }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.status !== 200) {
+          alert(res.statusText);
+        } else {
+          fetchComment();
+          Swal.fire(
+            'Silindi!',
+            'Yorumun silindi.',
+            'success'
+          )
+        }
+      })
+      .catch((err) => alert(err));
+  };
+
+  return [comments, onSubmit, text, setText, removeComment];
 }

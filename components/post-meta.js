@@ -18,7 +18,7 @@ export default function PostMeta({ post }) {
           Kategori{" "}
           {post.frontMatter.category.map((category, index) => (
             <span className="font-semibold text-blue-600" key={index}>
-              {index !== 0 && " and "} <a>{category}</a>
+              {index !== 0 && " and "} <Link href={`/blog?category=${category}`}><a>{category}</a></Link>
             </span>
           ))}
         </span>
