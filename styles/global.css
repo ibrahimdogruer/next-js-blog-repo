@@ -8,6 +8,22 @@
   }
 
   .site-4xl-container {
-      @apply max-w-4xl mx-auto;
+    @apply max-w-4xl mx-auto;
+  }
+
+  #category-list::-webkit-scrollbar {
+    height: 4px;
+    cursor: pointer;
+    /*background-color: rgba(229, 231, 235, var(--bg-opacity));*/
+  }
+  #category-list::-webkit-scrollbar-track {
+    background-color: rgba(229, 231, 235, var(--bg-opacity));
+    cursor: pointer;
+    /*background: red;*/
+  }
+  #category-list::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    background-color: #D3D6DC;
+    /*outline: 1px solid slategrey;*/
   }
 }

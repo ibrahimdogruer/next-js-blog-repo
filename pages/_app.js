@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }) {
     >
       <div className="antialiased text-grey-700">
         <Header />
-        <main className="mt-6 mb-20">
+        <main className="mt-4 mb-20">
           <Component {...pageProps} />
         </main>
       </div>

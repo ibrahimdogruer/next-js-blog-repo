@@ -49,7 +49,7 @@ export default function Comments({ comments, removeComment }) {
               <div className="space-x-2">
                 <b>{comment.name}</b>
                 <time className="text-gray-400">
-                  {DateTime.fromMillis(comment.created_at).toRelative()}
+                  {DateTime.fromMillis(comment?.created_at || Date.now()).toRelative()}
                 </time>
                 {isAuthenticated && comment.email === user.email && (
                   <button type="button" onClick={() => remove(comment)}>
