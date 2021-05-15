@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { DateTime } from "luxon";
 import Link from "next/link";
 import Loading from "../../components/loading";
 import { getAllNodes } from "next-mdx/server";
@@ -38,7 +39,7 @@ export default function BlogPage({ posts, categories }) {
     return (
       <div className="site-container">
         <div
-          className="space-x-4 flex whitespace-nowrap overflow-x-auto py-2 mb-4 px-6"
+          className="space-x-4 flex whitespace-nowrap overflow-x-auto py-2 mb-4 md:px-6"
           id="category-list"
         >
           <button
@@ -46,8 +47,8 @@ export default function BlogPage({ posts, categories }) {
             className={`py-1 px-4 rounded-2xl border border-gray-300 focus:outline-none
             ${
               selectedCategory === "all"
-                ? "bg-gray-500 text-white"
-                : "bg-gray-100 text-gray-800"
+                ? "bg-trueGray-500 text-white dark:bg-trueGray-300 dark:text-trueGray-800 dark:border-trueGray-300"
+                : "bg-trueGray-100 text-trueGray-800 dark:bg-trueGray-700 dark:text-trueGray-300 dark:border-trueGray-500"
             }`}
             onClick={() => getPostsByCategory("all")}
           >
@@ -61,8 +62,8 @@ export default function BlogPage({ posts, categories }) {
                 className={`py-1 px-4 rounded-2xl border border-gray-300 focus:outline-none
                 ${
                   selectedCategory === category.slug
-                    ? "bg-gray-500 text-white"
-                    : "bg-gray-100 text-gray-800"
+                    ? "bg-trueGray-500 text-white dark:bg-trueGray-300 dark:text-trueGray-800 dark:border-trueGray-300"
+                    : "bg-trueGray-100 text-trueGray-800 dark:bg-trueGray-700 dark:text-trueGray-300 dark:border-trueGray-500"
                 }`}
                 onClick={() => getPostsByCategory(category.slug)}
               >
@@ -71,33 +72,38 @@ export default function BlogPage({ posts, categories }) {
             );
           })}
         </div>
-        <div className="space-y-4 px-6">
+        <div className="space-y-4 md:px-6">
           {showPosts?.map((post) => {
             return (
-              <article
-                key={post.url}
-                className="shadow-md rounded transition duration-500 ease-in-out
-                transform hover:scale-1025 cursor-pointer"
-              >
-                {post.frontMatter.image && (
-                  <img
-                    src={post.frontMatter.image}
-                    alt=""
-                    className="rounded-t"
-                  />
-                )}
-                <div className="float-right py-1 px-3">
-                  <span className="text-gray-400">{post.frontMatter.date}</span>
-                </div>
-                <div className="p-6">
-                  <h2 className="text-xl font-bold">
-                    <Link href={post.url}>
+              <Link href={post.url}>
+                <article
+                  key={post.url}
+                  className="shadow-md rounded transition duration-500 ease-in-out
+                transform hover:scale-1025 cursor-pointer
+                dark:bg-trueGray-700"
+                >
+                  {post.frontMatter.image && (
+                    <img
+                      src={post.frontMatter.image}
+                      alt=""
+                      className="rounded-t"
+                    />
+                  )}
+                  <div className="float-right py-1 px-3">
+                    <span className="text-gray-400">
+                      {DateTime.fromSQL(post.frontMatter.date).toFormat("DDD", {
+                        locale: "tr",
+                      })}
+                    </span>
+                  </div>
+                  <div className="p-6">
+                    <h2 className="text-xl font-bold">
                       <a>{post.frontMatter.title}</a>
-                    </Link>
-                  </h2>
-                  <p>{post.frontMatter.excerpt}</p>
-                </div>
-              </article>
+                    </h2>
+                    <p>{post.frontMatter.excerpt}</p>
+                  </div>
+                </article>
+              </Link>
             );
           })}
         </div>

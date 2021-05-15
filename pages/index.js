@@ -6,7 +6,8 @@ function HomePage() {
           <img
             src="/me.jpeg"
             alt=""
-            className="w-60 h-60 rounded-full object-cover border-black border-2"
+            className="w-60 h-60 rounded-full object-cover border-black border-2
+            dark:border-gray-500"
           />
         </div>
         <div className="space-y-4">

@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 
@@ -8,24 +8,27 @@ export default function Comments({ comments, removeComment }) {
 
   const remove = async (comment) => {
     await Swal.fire({
-      title: 'Yorumunu silmek istediğine emin misin?',
+      title: "Yorumunu silmek istediğine emin misin?",
       text: "Bunu geri çeviremezsin!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Evet, sil!',
-      cancelButtonText: "Vazgeç"
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Vazgeç",
     }).then((result) => {
       if (result.isConfirmed) {
-        removeComment(comment)
+        removeComment(comment);
       }
-    })
+    });
   };
 
   if (!comments || !comments?.length) {
     return (
-      <div className="mt-5 flex justify-center items-center bg-gray-300 p-2 rounded">
+      <div
+        className="mt-5 flex justify-center items-center bg-trueGray-300 p-2 rounded
+      dark:bg-trueGray-700 dark:text-trueGray-300"
+      >
         <span>Henüz bir yorum yapılmamış!</span>
       </div>
     );
@@ -49,7 +52,9 @@ export default function Comments({ comments, removeComment }) {
               <div className="space-x-2">
                 <b>{comment.name}</b>
                 <time className="text-gray-400">
-                  {DateTime.fromMillis(comment?.created_at || Date.now()).toRelative()}
+                  {DateTime.fromMillis(
+                    comment?.created_at || Date.now()
+                  ).toRelative()}
                 </time>
                 {isAuthenticated && comment.email === user.email && (
                   <button type="button" onClick={() => remove(comment)}>
